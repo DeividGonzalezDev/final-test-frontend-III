@@ -28,6 +28,12 @@ const globalReducer = (state: GlobalState, action: GlobalAction): GlobalState =>
   switch (action.type) {
     case GlobalActionType.TOGGLE_DARK_MODE:
       localStorage.setItem("isDarkMode", action.payload.toString());
+       // eslint-disable-next-line no-case-declarations
+       const root = document.documentElement;
+      root.style.setProperty(
+        '--scrollbar-track-bg',
+        action.payload ? 'rgb(31 41 55)' : '#E0E0E0'
+      );
       return { ...state, isDarkMode: action.payload };
     default:
       return state;
@@ -43,13 +49,15 @@ interface GlobalContextProviderValue {
 
 export const GlobalContextProvider = ({ children }: GlobalContextProviderProps) => {
   const storedIsDarkMode = JSON.parse(localStorage.getItem("isDarkMode") ?? "false");
-  const [favoriteDentists, setFavoriteDentists] = useState<Dentist[]>([]);
+  const favoritesService = new FavoritesService();
+  const [favoriteDentists, setFavoriteDentists] = useState<Dentist[]>(favoritesService.getFavoriteDentists());
   const [state, dispatch] = useReducer(globalReducer, {
     isDarkMode: storedIsDarkMode,
   });
-  const favoritesService = new FavoritesService((newDentist) => {
+  favoritesService.setFavoritesChangedCallback((newDentist: Dentist[]) => {
     setFavoriteDentists(newDentist);
   });
+  
 
   /**
    * Toggles the dark mode.

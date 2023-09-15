@@ -97,7 +97,6 @@ export const FetchContextProvider = ({
         }
       );
       if (response.status === 404) {
-        console.log('HEAR!!!!!');
         
         throw new Response("Not found", { status: 404, statusText: "Not found" });
       } else if (response.status === 403) {

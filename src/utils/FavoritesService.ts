@@ -6,10 +6,11 @@ import { Dentist } from "../types/api-types";
 class FavoritesService { 
   private favoriteDentists: Dentist[] = []; 
   private favoritesChangedCallback: (favoriteDentists: Dentist[]) => void;
+  
 
-  constructor(favoritesChangedCallback: (favoriteDentists: Dentist[]) => void) {
+  constructor(favoritesChangedCallback?: (favoriteDentists: Dentist[]) => void) {
     this.favoriteDentists = JSON.parse(localStorage.getItem("favoriteDentistsDeividWebApp") ?? "[]");
-    this.favoritesChangedCallback = favoritesChangedCallback;
+    this.favoritesChangedCallback = favoritesChangedCallback ?? (() => {});
   }
   /**
    * Retrieves the list of favorite dentists.
@@ -86,6 +87,13 @@ class FavoritesService {
    */
   private notifyFavoritesChanged(): void {
     this.favoritesChangedCallback(this.favoriteDentists);
+  }
+
+  public getFavoritesChangedCallback(): (favoriteDentists: Dentist[]) => void {
+    return this.favoritesChangedCallback;
+  }
+  public setFavoritesChangedCallback(favoritesChangedCallback: (favoriteDentists: Dentist[]) => void) {
+    this.favoritesChangedCallback = favoritesChangedCallback;
   }
 }
 
